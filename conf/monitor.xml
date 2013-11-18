@@ -16,10 +16,8 @@
                         <impl-class>com.appdynamics.monitors.boundary.BoundaryMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <argument name="host" is-required="false" default-value="localhost"/>
-                    <argument name="port" is-required="false" default-value="8091"/>
-                    <argument name="username" is-required="false" default-value="username"/>
-                    <argument name="password" is-required="false" default-value="password"/>
+                    <argument name="api-key" is-required="true" default-value="<API Key>"/>
+                    <argument name="org-id" is-required="false" default-value="<Organization Id>"/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>
