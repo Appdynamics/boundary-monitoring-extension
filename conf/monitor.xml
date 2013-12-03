@@ -12,12 +12,12 @@
                 <type>java</type>
                 <execution-timeout-in-secs>60</execution-timeout-in-secs>
                 <java-task>
-                    <classpath>BoundaryMonitor.jar;lib/log4j-1.2.15.jar;lib/machineagent.jar;lib/gson-2.2.2.jar;lib/commons-lang-2.4.jar</classpath>
+                    <classpath>BoundaryMonitor.jar;lib/log4j-1.2.15.jar;lib/machineagent.jar;lib/gson-2.2.2.jar;lib/commons-lang-2.4.jar;httpclient-4.2.3.jar;httpcore-4.2.jar</classpath>
                         <impl-class>com.appdynamics.monitors.boundary.BoundaryMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <argument name="api-key" is-required="true" default-value="<API Key>"/>
-                    <argument name="org-id" is-required="false" default-value="<Organization Id>"/>
+                    <argument name="api-key" is-required="true" default-value="26pIU77FtyZxx1ZPXi75G1tmyg6"/>
+                    <argument name="org-id" is-required="false" default-value="L3gI1Wuw6qDgikcRH01Vhe7GtY9"/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>
