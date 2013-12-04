@@ -54,7 +54,7 @@ Boundary is a consolidated operations management platform built for today’s IT
 
 ## Custom Dashboard
 
-![](https://raw.github.com/Appdynamics/boundary-monitoring-extension/master/Boundary%20Dashboard.png)
+![](https://raw.github.com/Appdynamics/boundary-monitoring-extension/master/Boundary%20Dashboard.png?token=2880440__eyJzY29wZSI6IlJhd0Jsb2I6QXBwZHluYW1pY3MvYm91bmRhcnktbW9uaXRvcmluZy1leHRlbnNpb24vbWFzdGVyL0JvdW5kYXJ5IERhc2hib2FyZC5wbmciLCJleHBpcmVzIjoxMzg2ODAyNTAyfQ%3D%3D--dfa89e2e3461bbd8ef09d5db317bb02c430da0b9)
 
 ##Contributing
 
