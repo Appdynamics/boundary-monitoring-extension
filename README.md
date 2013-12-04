@@ -18,8 +18,8 @@ Boundary is a consolidated operations management platform built for today’s IT
 	<li>Open &lt;machineagent install dir&gt;/monitors/BoundaryMonitor/monitor.xml and configure the Boundary parameters.
 <p></p>
 <pre>
-	&lt;argument name="host" is-required="true" default-value="localhost" /&gt;          
-	&lt;argument name="port" is-required="true" default-value="8080" /&gt;
+	&lt;argument name="api-key" is-required="true" default-value="" /&gt;          
+	&lt;argument name="org-id" is-required="true" default-value="" /&gt;
 </pre>
 	</li>	
 	<li> Restart the machine agent.
