@@ -1,3 +1,5 @@
+package com.appdynamics.monitors.boundary;
+
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
 import com.singularity.ee.agent.systemagent.api.MetricWriter;
 import com.singularity.ee.agent.systemagent.api.TaskExecutionContext;
@@ -27,6 +29,10 @@ public class BoundaryMonitor extends AManagedMonitor {
         logger.setLevel(Level.INFO);
     }
 
+    /**
+     * Main execution method that uploads the metrics to the AppDynamics Controller
+     * @see com.singularity.ee.agent.systemagent.api.ITask#execute(java.util.Map, com.singularity.ee.agent.systemagent.api.TaskExecutionContext)
+     */
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
 
         try {
@@ -43,6 +49,10 @@ public class BoundaryMonitor extends AManagedMonitor {
         return new TaskOutput("Task failed with errors");
     }
 
+    /**
+     * Writes the Boundary metrics to the controller
+     * @param 	metricsMap		HashMap containing all metrics for all ip addresses
+     */
     private void printMetrics(Map metricsMap) throws Exception{
         Iterator ipIterator = metricsMap.entrySet().iterator();
         while (ipIterator.hasNext()) {
@@ -71,7 +81,7 @@ public class BoundaryMonitor extends AManagedMonitor {
      */
     private void printMetric(String metricName, Number metricValue, String aggregation, String timeRollup, String cluster) throws Exception
     {
-        MetricWriter metricWriter = super.getMetricWriter(METRIC_PREFIX + metricName,
+        MetricWriter metricWriter = super.getMetricWriter(metricName,
                 aggregation,
                 timeRollup,
                 cluster

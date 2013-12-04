@@ -1,3 +1,5 @@
+package com.appdynamics.monitors.boundary;
+
 import com.google.gson.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -14,9 +16,7 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.*;
 
@@ -37,31 +37,23 @@ public class BoundaryWrapper {
             "outOfOrder",
             "activeFlows");
 
-    // Should this be singleton??
-
     public BoundaryWrapper(Map<String, String> taskArguments) {
         this.apiKey = taskArguments.get("api-key");
         this.orgId = taskArguments.get("org-id");
     }
 
     /**
-     * Connects to the couchbase cluster host and retrieves metrics using the CouchBase REST API
-     * @return 	HashMap     Map containing metrics retrieved from using the CouchBase REST API
+     * Retrieves metrics using the Boundary REST API
+     * @return 	Map     Map containing metrics retrieved using the Boundary REST API
      */
     public Map gatherMetrics() throws Exception{
-        HttpURLConnection connection = null;
-        InputStream is = null;
-
         try {
-            String observationIds = getObservationIds();
+            String observationIds = getObservationDomainIds();
             JsonArray responseData = getResponseData(observationIds);
-
             Map metrics = constructMetricsMap(responseData);
-
-            //System.out.println("Done gathering metrics" + responseString.toString());
             return metrics;
         } catch(MalformedURLException e) {
-            logger.error("Invalid URL used to connect to CouchDB");
+            logger.error("Invalid URL used to connect to Boundary");
             throw e;
         } catch(JsonSyntaxException e) {
             logger.error("Error parsing the Json response");
@@ -71,6 +63,11 @@ public class BoundaryWrapper {
         }
     }
 
+    /**
+     * Constructs a metrics map based on the Json response data retrieved from the REST API
+     * @param   responseData    The extracted data field from the Json response
+     * @return 	metrics         Populated map containing metrics by iterating through the response data JsonArray
+     */
     private Map constructMetricsMap(JsonArray responseData) {
         HashMap<String, HashMap<String, Long>> metrics = new HashMap<String, HashMap<String, Long>>();
 
@@ -83,19 +80,19 @@ public class BoundaryWrapper {
             }
             metrics.put(ipAddress, ipMetrics);
         }
-
         return metrics;
     }
 
-
-    private String getObservationIds() throws Exception {
+    /**
+     * Retrieves observation domain ids from the /meters REST request
+     * @return  String       A comma separated list of valid observationIds needed to make the historical API REST request
+     */
+    private String getObservationDomainIds() throws Exception {
         HttpGet httpGet = new HttpGet(constructMetersURL());
         httpGet.addHeader(BasicScheme.authenticate(
                 new UsernamePasswordCredentials(apiKey, ""),
                 "UTF-8", false));
 
-
-        System.out.println("executing request " + httpGet.getRequestLine());
         HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response = httpClient.execute(httpGet);
         HttpEntity entity = response.getEntity();
@@ -120,8 +117,9 @@ public class BoundaryWrapper {
     }
 
     /**
-     * Populates the cluster metrics hashmap
-     * @param   observationIds     A JsonObject containing metrics for the entire cluster
+     * Retrieves network traffic data in the past minute from Boundary
+     * @param   observationIds     A comma separated list of valid observationIds needed to make the historical API REST request
+     * @return  responseData       A JsonArray containing all the ip_addresses, and their respective network traffic metrics
      */
     private JsonArray getResponseData(String observationIds) throws Exception{
         String metricsURL = constructMetricsURL();
@@ -155,6 +153,11 @@ public class BoundaryWrapper {
         return responseData;
     }
 
+
+    /**
+     * Construct the REST URL for Boundary's historical data
+     * @return	The Boundary history REST url string
+     */
     private String constructMetricsURL() {
         return new StringBuilder()
                 .append("https://api.boundary.com/")
@@ -162,6 +165,11 @@ public class BoundaryWrapper {
                 .append("/volume_1m_meter_ip/history")
                 .toString();
     }
+
+    /**
+     * Construct the REST URL for Boundary's meters path
+     * @return	The Boundary meters REST url string
+     */
     private String constructMetersURL() {
         return new StringBuilder()
                 .append("https://api.boundary.com/")
