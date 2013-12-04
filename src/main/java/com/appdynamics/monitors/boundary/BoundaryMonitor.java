@@ -34,7 +34,6 @@ public class BoundaryMonitor extends AManagedMonitor {
      * @see com.singularity.ee.agent.systemagent.api.ITask#execute(java.util.Map, com.singularity.ee.agent.systemagent.api.TaskExecutionContext)
      */
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
-
         try {
             logger.info("Exceuting BoundaryMonitor...");
             BoundaryWrapper boundaryWrapper = new BoundaryWrapper(taskArguments);
@@ -65,7 +64,7 @@ public class BoundaryMonitor extends AManagedMonitor {
                 Long metric = metrics.get(metricName);
                 printMetric(METRIC_PREFIX + hostName + "|" + metricName, metric,
                         MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION,
-                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
+                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_CURRENT,
                         MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
             }
         }
@@ -79,13 +78,13 @@ public class BoundaryMonitor extends AManagedMonitor {
      * @param 	timeRollup		Average OR Current OR Sum
      * @param 	cluster			Collective OR Individual
      */
-    private void printMetric(String metricName, Number metricValue, String aggregation, String timeRollup, String cluster) throws Exception
+    private void printMetric(String metricName, Long metricValue, String aggregation, String timeRollup, String cluster) throws Exception
     {
         MetricWriter metricWriter = super.getMetricWriter(metricName,
                 aggregation,
                 timeRollup,
                 cluster
         );
-        metricWriter.printMetric(String.valueOf((long) metricValue.doubleValue()));
+        metricWriter.printMetric(String.valueOf(metricValue));
     }
 }
