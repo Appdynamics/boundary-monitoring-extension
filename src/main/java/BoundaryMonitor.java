@@ -1,4 +1,5 @@
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
+import com.singularity.ee.agent.systemagent.api.MetricWriter;
 import com.singularity.ee.agent.systemagent.api.TaskExecutionContext;
 import com.singularity.ee.agent.systemagent.api.TaskOutput;
 import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
@@ -6,6 +7,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class BoundaryMonitor extends AManagedMonitor {
@@ -32,7 +34,7 @@ public class BoundaryMonitor extends AManagedMonitor {
             BoundaryWrapper boundaryWrapper = new BoundaryWrapper(taskArguments);
             Map metrics = boundaryWrapper.gatherMetrics();
             logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
-            //printMetrics(metrics);
+            printMetrics(metrics);
             logger.info("Printed metrics successfully");
             return new TaskOutput("Task successful...");
         } catch (Exception e) {
@@ -41,5 +43,39 @@ public class BoundaryMonitor extends AManagedMonitor {
         return new TaskOutput("Task failed with errors");
     }
 
+    private void printMetrics(Map metricsMap) throws Exception{
+        Iterator ipIterator = metricsMap.entrySet().iterator();
+        while (ipIterator.hasNext()) {
+            Map.Entry<String, HashMap> mapEntry = (Map.Entry<String, HashMap>) ipIterator.next();
+            String hostName = mapEntry.getKey();
+            HashMap<String, Long> metrics = mapEntry.getValue();
+            Iterator metricIterator = metrics.keySet().iterator();
+            while (metricIterator.hasNext()) {
+                String metricName = metricIterator.next().toString();
+                Long metric = metrics.get(metricName);
+                printMetric(METRIC_PREFIX + hostName + "|" + metricName, metric,
+                        MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION,
+                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
+                        MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+            }
+        }
+    }
 
+    /**
+     * Returns the metric to the AppDynamics Controller.
+     * @param 	metricName		Name of the Metric
+     * @param 	metricValue		Value of the Metric
+     * @param 	aggregation		Average OR Observation OR Sum
+     * @param 	timeRollup		Average OR Current OR Sum
+     * @param 	cluster			Collective OR Individual
+     */
+    private void printMetric(String metricName, Number metricValue, String aggregation, String timeRollup, String cluster) throws Exception
+    {
+        MetricWriter metricWriter = super.getMetricWriter(METRIC_PREFIX + metricName,
+                aggregation,
+                timeRollup,
+                cluster
+        );
+        metricWriter.printMetric(String.valueOf((long) metricValue.doubleValue()));
+    }
 }
