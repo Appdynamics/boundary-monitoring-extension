@@ -138,7 +138,6 @@ public class BoundaryWrapper {
         params.add(new BasicNameValuePair("to", currentTime.toString()));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
-        System.out.println("executing request " + httpPost.getRequestLine());
         HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response = httpClient.execute(httpPost);
         HttpEntity entity = response.getEntity();
