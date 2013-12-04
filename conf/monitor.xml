@@ -16,8 +16,8 @@
                         <impl-class>com.appdynamics.monitors.boundary.BoundaryMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <argument name="api-key" is-required="true" default-value="26pIU77FtyZxx1ZPXi75G1tmyg6"/>
-                    <argument name="org-id" is-required="false" default-value="L3gI1Wuw6qDgikcRH01Vhe7GtY9"/>
+                    <argument name="api-key" is-required="true" default-value=""/>
+                    <argument name="org-id" is-required="false" default-value=""/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>
