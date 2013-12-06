@@ -5,7 +5,7 @@ This extension works only with the standalone machine agent.
 
 ## Use Case
 
-Boundary is a consolidated operations management platform built for today’s IT environments. Delivered as a SaaS offering, Boundary enables customers to monitor their entire IT environment from a single point of control and is uniquely designed to deal with challenges of modern, highly distributed applications. The boundary-monitoring-extension gathers metrics exposed through Boundary's Historical Data REST API and sends them to the AppDynamics Metric Browser.
+Boundary is a consolidated operations management platform built for today’s IT environments. Delivered as a SaaS offering, Boundary enables customers to monitor their entire IT environment from a single point of control and is uniquely designed to deal with challenges of modern, highly distributed applications. The boundary-monitoring-extension gathers aggregate meter metrics exposed through Boundary's Historical Data REST API and sends them to the AppDynamics Metric Browser.
 
 ## Installation
 <ol>
