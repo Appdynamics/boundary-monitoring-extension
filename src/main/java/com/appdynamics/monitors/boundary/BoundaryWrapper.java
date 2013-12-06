@@ -25,6 +25,7 @@ public class BoundaryWrapper {
     private static final Logger logger = Logger.getLogger(BoundaryWrapper.class.getSimpleName());
     private String apiKey;
     private String orgId;
+    private HashMap<String, String> meterIds = new HashMap<String, String>();
 
     private static List<String> metricNames = Arrays.asList(
             "ingressPackets",
@@ -48,9 +49,16 @@ public class BoundaryWrapper {
      */
     public Map gatherMetrics() throws Exception{
         try {
-            String observationIds = getObservationDomainIds();
-            JsonArray responseData = getResponseData(observationIds);
-            Map metrics = constructMetricsMap(responseData);
+            populateObservationDomainIds();
+            Iterator iterator = meterIds.entrySet().iterator();
+            HashMap<String, HashMap<String, Long>> metrics = new HashMap<String, HashMap<String, Long>>();
+            while (iterator.hasNext()) {
+                Map.Entry<String, String> meterInfo = (Map.Entry<String,String>) iterator.next();
+                String meterName = meterInfo.getKey();
+                String meterObservationDomainId = meterInfo.getValue();
+                JsonArray responseData = getResponseData(meterObservationDomainId);
+                populateMetricsMap(responseData, metrics, meterName);
+            }
             return metrics;
         } catch(MalformedURLException e) {
             logger.error("Invalid URL used to connect to Boundary");
@@ -65,29 +73,26 @@ public class BoundaryWrapper {
 
     /**
      * Constructs a metrics map based on the Json response data retrieved from the REST API
-     * @param   responseData    The extracted data field from the Json response
-     * @return 	metrics         Populated map containing metrics by iterating through the response data JsonArray
+     * @param   responseData    The extracted 'data' field from the Json response
+     * @param   metricsMap      Map that is to be populated with metrics parsed from the responseData
+     * @param 	meterName       Name of the Boundary application node
      */
-    private Map constructMetricsMap(JsonArray responseData) {
-        HashMap<String, HashMap<String, Long>> metrics = new HashMap<String, HashMap<String, Long>>();
-
+    private void populateMetricsMap(JsonArray responseData, Map metricsMap, String meterName) throws Exception{
         for (int i = 0; i < responseData.size(); i++) {
             JsonArray ipMetricsArray = responseData.get(i).getAsJsonArray();
-            String ipAddress = ipMetricsArray.get(1).getAsString();
             HashMap<String, Long> ipMetrics = new HashMap<String, Long>();
-            for (int j = 2; j < ipMetricsArray.size(); j++) {
-                ipMetrics.put(metricNames.get(j - 2), ipMetricsArray.get(j).getAsLong());
+            for (int j = 1; j < ipMetricsArray.size(); j++) {
+                ipMetrics.put(metricNames.get(j - 1), ipMetricsArray.get(j).getAsLong());
             }
-            metrics.put(ipAddress, ipMetrics);
+            metricsMap.put(meterName, ipMetrics);
         }
-        return metrics;
     }
 
     /**
      * Retrieves observation domain ids from the /meters REST request
-     * @return  String       A comma separated list of valid observationIds needed to make the historical API REST request
+     * @return  Map       A map containing the name of the meter and it's corresponding observationDomainId
      */
-    private String getObservationDomainIds() throws Exception {
+    private void populateObservationDomainIds() throws Exception {
         HttpGet httpGet = new HttpGet(constructMetersURL());
         httpGet.addHeader(BasicScheme.authenticate(
                 new UsernamePasswordCredentials(apiKey, ""),
@@ -104,16 +109,11 @@ public class BoundaryWrapper {
         }
 
         JsonArray responseArray = new JsonParser().parse(responseString.toString()).getAsJsonArray();
-        StringBuilder observationIds = new StringBuilder();
 
         for (int i = 0; i < responseArray.size(); i++) {
             JsonObject obj = responseArray.get(i).getAsJsonObject();
-            observationIds.append(obj.get("obs_domain_id").getAsString());
-            if (i < responseArray.size() - 1) {
-                observationIds.append(",");
-            }
+            meterIds.put(obj.get("name").getAsString(), obj.get("obs_domain_id").getAsString());
         }
-        return observationIds.toString();
     }
 
     /**
@@ -161,7 +161,7 @@ public class BoundaryWrapper {
         return new StringBuilder()
                 .append("https://api.boundary.com/")
                 .append(orgId)
-                .append("/volume_1m_meter_ip/history")
+                .append("/volume_1m_meter/history")
                 .toString();
     }
 
