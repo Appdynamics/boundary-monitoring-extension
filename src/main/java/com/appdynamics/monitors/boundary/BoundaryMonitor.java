@@ -61,8 +61,8 @@ public class BoundaryMonitor extends AManagedMonitor {
                 String metricName = metricIterator.next().toString();
                 Long metric = metrics.get(metricName);
                 printMetric(METRIC_PREFIX + hostName + "|" + metricName, metric,
-                        MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION,
-                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_CURRENT,
+                        MetricWriter.METRIC_AGGREGATION_TYPE_AVERAGE,
+                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
                         MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
             }
         }
