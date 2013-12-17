@@ -58,11 +58,11 @@ Boundary is a consolidated operations management platform built for today’s IT
 
 ##Contributing
 
-Always feel free to fork and contribute any changes directly via [GitHub](https://github.com/Appdynamics/boundary-monitoring-extension).
+Always feel free to fork and contribute any changes directly here on GitHub.
 
 ##Community
 
-Find out more in the [AppSphere](http://appsphere.appdynamics.com/t5/eXchange/Boundary-Monitoring-Extension/idi-p/4851) community.
+Find out more in the [AppSphere](http://appsphere.appdynamics.com/t5/eXchange/Boundary-Monitoring-Extension/idi-p/5541) community.
 
 ##Support
 
