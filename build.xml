@@ -1,13 +1,22 @@
+<!--
+  ~   Copyright 2018. AppDynamics LLC and its affiliates.
+  ~   All Rights Reserved.
+  ~   This is unpublished proprietary source code of AppDynamics LLC and its affiliates.
+  ~   The copyright notice above does not evidence any actual or intended publication of such source code.
+  ~
+  -->
+
 <project default="build">
     <property name="build.dir" value="dist" />
     <property name="conf.dir" value="conf" />
+    <property name="licenses.dir" value="licenses" />
     <property name="project.name" value="BoundaryMonitor"/>
     <property name="lib.dir" value="lib"/>
 
     <path id="myClassPath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
         <fileset dir="${conf.dir}" includes="*.*"/>
-
+        <fileset dir="${licenses.dir}" includes="*.*"/>
     </path>
 
     <target name="build">
@@ -27,6 +36,9 @@
         </copy>
         <copy todir="${build.dir}/BoundaryMonitor/">
             <fileset dir="${conf.dir}" includes="monitor.xml"/>
+            <fileset dir="${licenses.dir}" includes="LICENSE.txt"/>
+            <fileset dir="${licenses.dir}" includes="NOTICE.txt"/>
+
         </copy>
         <delete dir="${build.dir}/classes"/>
     </target>
